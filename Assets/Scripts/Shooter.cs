@@ -3,19 +3,19 @@ using UnityEngine;
 
 public abstract class Shooter : MonoBehaviour
 {
-    private void Awake()
+    protected virtual void Awake()
     {
         PlayerInputManager playerInputManager = GetComponentInParent<PlayerInputManager>();
         playerInputManager.OnShootStart += ShootStart;
         playerInputManager.OnShootEnd += ShootEnd;
     }
 
-    public virtual void ShootStart()
+    protected virtual void ShootStart()
     {
         Debug.Log("Shot started");
     }
 
-    public virtual void ShootEnd()
+    protected virtual void ShootEnd()
     {
         Debug.Log("Shot ended");
     }

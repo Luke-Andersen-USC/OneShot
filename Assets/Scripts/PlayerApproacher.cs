@@ -8,6 +8,12 @@ public class PlayerApproacher : MonoBehaviour
     
     
     [SerializeField] private float walkSpeed = 0.5f;
+    [SerializeField] private ParticleSystem ps;
+    
+    [Header("SFX")]
+    [SerializeField] private AudioClip hurtSFX;
+    [SerializeField] private AudioClip attackSFX;
+    
     public enum EnemyState
     {
         Idle,
@@ -18,6 +24,7 @@ public class PlayerApproacher : MonoBehaviour
     
     private Animator _animator;
     private Rigidbody _rigidbody;
+    private AudioSource _audioSource;
 
     private EnemyState _currentState = EnemyState.Idle;
     private float _timeInState;
@@ -26,6 +33,7 @@ public class PlayerApproacher : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -60,14 +68,25 @@ public class PlayerApproacher : MonoBehaviour
 
     public void KillEnemy()
     {
+        _audioSource.PlayOneShot(hurtSFX);
         SwitchState(EnemyState.Dead);
-        LevelManager.Instance.TriggerLevelWin(1.5f);
+        JuiceController.Instance.Slowdown(1.5f);
+        JuiceController.Instance.ScreenShake(0.3f, 0.3f);
+        LevelManager.Instance.TriggerLevelWin(2.5f);
+        
+        ps.Play();
     }
-    
-    
-    // UI Manager One Shot
-    
-    // UI Manager Retry
-    
-    // UI Manager Score Screen
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            SwitchState(EnemyState.Attacking);
+            _audioSource.PlayOneShot(attackSFX);
+            
+            other.gameObject.GetComponent<Player>().KillPlayer();
+            // Change to level loss
+            LevelManager.Instance.TriggerLevelLoss(1.5f);
+        }
+    }
 }

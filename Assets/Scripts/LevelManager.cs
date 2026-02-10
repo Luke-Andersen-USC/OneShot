@@ -18,6 +18,19 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
     
+    private TitleScreenBlaster loseScreenBlaster;
+    public TitleScreenBlaster LoseScreenBlaster
+    {
+        get
+        {
+            if (loseScreenBlaster == null)
+            {
+                loseScreenBlaster = GameObject.Find("LoseScreenBlaster").GetComponent<TitleScreenBlaster>();
+            }
+            return loseScreenBlaster;
+        }
+    }
+    
     private ScoreHandler endScreenScoreHandler;
 
     public ScoreHandler EndScreenScoreHandler
@@ -32,10 +45,24 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
     
-    public bool IsInputEnabled { private set; get; }
+    private AudioSource musicPlayer;
+    public AudioSource MusicPlayer
+    {
+        get
+        {
+            if (musicPlayer == null)
+            {
+                musicPlayer = GameObject.Find("MusicPlayer").GetComponent<AudioSource>();
+            }
+            return musicPlayer;
+        }
+    }
+
+    public bool IsInputEnabled = false;
 
     public void StartLevel()
     {
+        MusicPlayer.Play();
         StartCoroutine(StartLevelCoroutine());
     }
 
@@ -44,6 +71,24 @@ public class LevelManager : Singleton<LevelManager>
         IsInputEnabled = false;
         yield return TitleScreenBlaster.PlayTitle();
         IsInputEnabled = true;
+    }
+    
+    public void TriggerLevelLoss(float waitTime)
+    {
+        StartCoroutine(LoseLevel(waitTime));
+    }
+
+    private IEnumerator LoseLevel(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        LoseLevel();
+    }
+    
+    public void LoseLevel()
+    {
+        Time.timeScale = 0f;
+        MusicPlayer.Pause();
+        StartCoroutine(LoseScreenBlaster.PlayTitle());
     }
     
     public void TriggerLevelWin(float waitTime)
@@ -55,18 +100,12 @@ public class LevelManager : Singleton<LevelManager>
     {
         yield return new WaitForSeconds(waitTime);
         WinLevel();
-        EndScreenScoreHandler.StartScoreCount(4000);
-        //StartCoroutine(EndScreenScoreHandler.CountUpRoutine());
     }
     
     public void WinLevel()
     {
         Time.timeScale = 0f;
-        //Enable Score Canvas
-    }
-    
-    void Update()
-    {
-        
+        MusicPlayer.Pause();
+        EndScreenScoreHandler.StartScoreCount(4000);
     }
 }

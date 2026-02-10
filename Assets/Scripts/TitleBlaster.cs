@@ -5,17 +5,13 @@ using UnityEngine;
 public class TitleScreenBlaster : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Canvas _canvas;
-    [SerializeField] private UIBlast one;
-    [SerializeField] private UIBlast two;
+    [SerializeField] protected Canvas _canvas;
+    [SerializeField] protected UIBlast one;
+    [SerializeField] protected UIBlast two;
     [Header("Timing")]
-    [SerializeField] private float pauseOne = 0.45f;
-    [SerializeField] private float pauseTwo = 0.45f;
-    [SerializeField] private float pauseTitle = 0.7f;
-    void Start()
-    {
-        StartCoroutine(PlayTitle());
-    }
+    [SerializeField] protected float pauseOne = 0.45f;
+    [SerializeField] protected float pauseTwo = 0.45f;
+    [SerializeField] protected float pauseTitle = 0.7f;
 
     public IEnumerator PlayTitle()
     {
@@ -23,11 +19,11 @@ public class TitleScreenBlaster : MonoBehaviour
         two.gameObject.SetActive(false);
         _canvas.enabled = true;
         
-        yield return new WaitForSeconds(pauseOne);
+        yield return new WaitForSecondsRealtime(pauseOne);
         one.Play();
-        yield return new WaitForSeconds(pauseTwo);
+        yield return new WaitForSecondsRealtime(pauseTwo);
         two.Play();
-        yield return new WaitForSeconds(pauseTitle);
+        yield return new WaitForSecondsRealtime(pauseTitle);
         _canvas.enabled = false;
     }
 }

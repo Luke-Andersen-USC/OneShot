@@ -15,6 +15,7 @@ public class ScoreHandler : MonoBehaviour
     
     [Header("Timing")]
     [SerializeField] private float blastTime = 0.4f;
+    [SerializeField] private float scoreWaitTime = 1f;
     
     [Header("Score")]
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -28,6 +29,7 @@ public class ScoreHandler : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip tickSFX;
+    [SerializeField] private AudioClip finishTickSFX;
     [SerializeField] private int tickInterval = 100;
 
     private int currentScore;
@@ -89,7 +91,10 @@ public class ScoreHandler : MonoBehaviour
         currentScore = targetScore;
         UpdateScoreText();
         
-        yield return new WaitForSecondsRealtime(blastTime);
+        audioSource.PlayOneShot(finishTickSFX);
+        
+        yield return new WaitForSecondsRealtime(scoreWaitTime);
+        
         Rank.Play();
         yield return new WaitForSecondsRealtime(blastTime);
         RankAchieved.Play();

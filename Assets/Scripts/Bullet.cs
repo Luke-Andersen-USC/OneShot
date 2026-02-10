@@ -4,6 +4,8 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float BulletSpeed = 10;
+    private float BulletForce = 10f;
+    private Vector3 KillDirection = Vector3.up;
 
     private void Update()
     {
@@ -16,6 +18,8 @@ public class Bullet : MonoBehaviour
         if (playerApproacher != null)
         {
             playerApproacher.KillEnemy();
+            playerApproacher.GetComponent<Rigidbody>().AddForce(KillDirection * BulletForce, ForceMode.Impulse);
+            
             Destroy(gameObject);
         }
     }
